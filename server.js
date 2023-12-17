@@ -1,5 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+const openai = require('openai');
+
+require('dotenv').config();
 
 const app = express();
 const port = 3001;
@@ -7,22 +10,29 @@ const port = 3001;
 app.use(cors());
 app.use(express.json());
 
-// Mock data for a specific topic, e.g., "Machine Learning"
-const mockData = {
-  "Machine Learning": [
-    { id: 1, content: "Machine learning is a type of artificial intelligence (AI) that allows software applications to become more accurate at predicting outcomes without being explicitly programmed to do so." },
-    { id: 2, content: "Machine learning algorithms use historical data as input to predict new output values." },
-    { id: 3, content: "The main types of machine learning are supervised learning, unsupervised learning, and reinforcement learning." }
-  ]
-};
+const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
-app.post('/getKeyPoints', (req, res) => {
+const openaiClient = new openai({ apiKey: openaiApiKey });
+
+app.post('/getKeyPoints', async (req, res) => {
   const { topic } = req.body;
 
-  if (mockData[topic]) {
-    res.json({ keyPoints: mockData[topic] });
-  } else {
-    res.status(404).send('Topic not found');
+  try {
+    const response = await openaiClient.completions.create({
+      model: 'gpt-3.5-turbo-instruct', // Choose the appropriate engine
+      prompt: `Summarize key points about ${topic}`,
+      max_tokens: 100, // Adjust as needed
+    });
+
+    const keyPoints = response.choices.map((choice) => ({
+      id: choice.id,
+      content: choice.text,
+    }));
+
+    res.json({ keyPoints });
+  } catch (error) {
+    console.error('There was an error fetching the key points:', error);
+    res.status(500).send('Error fetching key points');
   }
 });
 

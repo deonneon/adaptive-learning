@@ -1,7 +1,6 @@
-// src/App.tsx
-
 import React, { useState } from 'react';
 import './App.css'; // Make sure to import the CSS file
+import openai from 'openai';
 
 interface KeyPoint {
   id: number;
@@ -22,14 +21,13 @@ function App() {
         },
         body: JSON.stringify({ topic }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
       setKeyPoints(data.keyPoints);
-  
     } catch (error) {
       console.error('There was an error fetching the key points:', error);
     }
@@ -51,7 +49,7 @@ function App() {
 
       case 'understand':
         // Move to the next key point
-        const currentIndex = keyPoints.findIndex(point => point.id === currentPoint.id);
+        const currentIndex = keyPoints.findIndex((point) => point.id === currentPoint.id);
         const nextPoint = keyPoints[currentIndex + 1];
         if (nextPoint) {
           setCurrentPoint(nextPoint);
@@ -76,10 +74,16 @@ function App() {
           onChange={(e) => setTopic(e.target.value)}
           className="topic-input"
         />
-        <button onClick={handleTopicSubmit} className="submit-button">Learn</button>
+        <button onClick={handleTopicSubmit} className="submit-button">
+          Learn
+        </button>
         <div className="keypoints">
           {keyPoints.map((point) => (
-            <div key={point.id} onClick={() => setCurrentPoint(point)} className="keypoint">
+            <div
+              key={point.id}
+              onClick={() => setCurrentPoint(point)}
+              className="keypoint"
+            >
               {point.content}
             </div>
           ))}
@@ -93,9 +97,24 @@ function App() {
           </div>
         )}
         <div className="comprehension-buttons">
-          <button onClick={() => handleComprehensionResponse('dontUnderstand')} className="response-button">Don't Understand</button>
-          <button onClick={() => handleComprehensionResponse('kindOfUnderstand')} className="response-button">Kind of Understand</button>
-          <button onClick={() => handleComprehensionResponse('understand')} className="response-button">Understand</button>
+          <button
+            onClick={() => handleComprehensionResponse('dontUnderstand')}
+            className="response-button"
+          >
+            Don't Understand
+          </button>
+          <button
+            onClick={() => handleComprehensionResponse('kindOfUnderstand')}
+            className="response-button"
+          >
+            Kind of Understand
+          </button>
+          <button
+            onClick={() => handleComprehensionResponse('understand')}
+            className="response-button"
+          >
+            Understand
+          </button>
         </div>
       </div>
     </div>
