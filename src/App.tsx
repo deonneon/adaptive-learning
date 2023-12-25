@@ -13,7 +13,7 @@ function App() {
 
   const handleTopicSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3001/test', { // Updated endpoint
+      const response = await fetch('http://localhost:3001/getKeyPoints', { // Updated endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
