@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.css'; // Make sure to import the CSS file
-import openai from 'openai';
 
 interface KeyPoint {
   id: number;

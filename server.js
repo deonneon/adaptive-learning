@@ -18,18 +18,28 @@ app.post('/getKeyPoints', async (req, res) => {
   const { topic } = req.body;
 
   try {
-    const response = await openaiClient.completions.create({
-      model: 'gpt-3.5-turbo-instruct', // Choose the appropriate engine
-      prompt: `Summarize key points about ${topic}`,
+    const response = await openaiClient.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful education assistant designed to output JSON.",
+        },
+        { role: "user", content: `Summarize key points about ${topic}. Each key point should be its own property.` },
+      ],
+      model: "gpt-3.5-turbo-1106",
+      response_format: { type: "json_object" },
       max_tokens: 100, // Adjust as needed
     });
-
-    const keyPoints = response.choices.map((choice) => ({
-      id: choice.id,
-      content: choice.text,
+    console.log("Response initially received:", response.choices[0].message.content); // Print out the response
+    // Transforming the response into a suitable format
+    const keyPoints = response.choices.map((choice, index) => ({
+      id: index, // Assign a unique ID since choice.id might not be available
+      content: choice.text, // Trim to remove any extra whitespace
     }));
 
-    res.json({ keyPoints });
+    console.log("Response received:", keyPoints); // Print out the response
+
+    res.json({ keyPoints }); // Send the response in JSON format
   } catch (error) {
     console.error('There was an error fetching the key points:', error);
     res.status(500).send('Error fetching key points');
