@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React, { useState } from 'react';
 import './App.css'; // Make sure to import the CSS file
 
@@ -15,7 +13,8 @@ function App() {
 
   const handleTopicSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3001/getKeyPoints', {
+      const response = await fetch('http://localhost:3001/test', {
+      //const response = await fetch('http://localhost:3001/getKeyPoints', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,10 +28,21 @@ function App() {
   
       const data = await response.json();
       setKeyPoints(data.keyPoints);
-  
+      
+      // Check if there are keypoints and set the first one as the current point
+      if (data.keyPoints && data.keyPoints.length > 0) {
+        setCurrentPoint(data.keyPoints[0]);
+      } else {
+        setCurrentPoint(null); // Reset to null if there are no keypoints
+      }
     } catch (error) {
       console.error('There was an error fetching the key points:', error);
     }
+  };
+
+  const selectKeyPoint = (pointId: number) => {
+    const point = keyPoints.find(p => p.id === pointId) || null; // Fallback to null if not found
+    setCurrentPoint(point);
   };
 
   const handleComprehensionResponse = (response: string) => {
@@ -51,7 +61,7 @@ function App() {
 
       case 'understand':
         // Move to the next key point
-        const currentIndex = keyPoints.findIndex(point => point.id === currentPoint.id);
+        const currentIndex = keyPoints.findIndex((point) => point.id === currentPoint.id);
         const nextPoint = keyPoints[currentIndex + 1];
         if (nextPoint) {
           setCurrentPoint(nextPoint);
@@ -76,11 +86,17 @@ function App() {
           onChange={(e) => setTopic(e.target.value)}
           className="topic-input"
         />
-        <button onClick={handleTopicSubmit} className="submit-button">Learn</button>
+        <button onClick={handleTopicSubmit} className="submit-button">
+          Learn
+        </button>
         <div className="keypoints">
           {keyPoints.map((point) => (
-            <div key={point.id} onClick={() => setCurrentPoint(point)} className="keypoint">
-              {point.content}
+            <div
+              key={point.id}
+              onClick={() => selectKeyPoint(point.id)}
+              className={`keypoint ${currentPoint && point.id === currentPoint.id ? 'current' : ''}`}
+            >
+              {point.id}
             </div>
           ))}
         </div>
@@ -89,13 +105,28 @@ function App() {
       <div className="main-content">
         {currentPoint && (
           <div className="keypoint current-point">
-            {currentPoint.content}
+            {currentPoint.content} {/* Displaying the value (content) */}
           </div>
         )}
         <div className="comprehension-buttons">
-          <button onClick={() => handleComprehensionResponse('dontUnderstand')} className="response-button">Don't Understand</button>
-          <button onClick={() => handleComprehensionResponse('kindOfUnderstand')} className="response-button">Kind of Understand</button>
-          <button onClick={() => handleComprehensionResponse('understand')} className="response-button">Understand</button>
+          <button
+            onClick={() => handleComprehensionResponse('dontUnderstand')}
+            className="response-button"
+          >
+            Don't Understand
+          </button>
+          <button
+            onClick={() => handleComprehensionResponse('kindOfUnderstand')}
+            className="response-button"
+          >
+            Kind of Understand
+          </button>
+          <button
+            onClick={() => handleComprehensionResponse('understand')}
+            className="response-button"
+          >
+            Understand
+          </button>
         </div>
       </div>
     </div>

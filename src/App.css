@@ -117,3 +117,7 @@ button:hover {
   }
 }
 
+
+.keypoint.current {
+  background-color: #AF4CAB; /* Or any other style to highlight */
+}
