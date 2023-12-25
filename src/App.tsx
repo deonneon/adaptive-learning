@@ -13,23 +13,28 @@ function App() {
 
   const handleTopicSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3001/getKeyPoints', {
+      const response = await fetch('http://localhost:3001/test', { // Updated endpoint
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ topic }),
       });
-
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-
+  
       const data = await response.json();
       setKeyPoints(data.keyPoints);
     } catch (error) {
       console.error('There was an error fetching the key points:', error);
     }
+  };
+
+  const selectKeyPoint = (pointId: number) => {
+    const point = keyPoints.find(p => p.id === pointId) || null; // Fallback to null if not found
+    setCurrentPoint(point);
   };
 
   const handleComprehensionResponse = (response: string) => {
@@ -80,10 +85,10 @@ function App() {
           {keyPoints.map((point) => (
             <div
               key={point.id}
-              onClick={() => setCurrentPoint(point)}
+              onClick={() => selectKeyPoint(point.id)}
               className="keypoint"
             >
-              {point.content}
+              {point.id} {/* Displaying the key (id) */}
             </div>
           ))}
         </div>
@@ -92,7 +97,7 @@ function App() {
       <div className="main-content">
         {currentPoint && (
           <div className="keypoint current-point">
-            {currentPoint.content}
+            {currentPoint.content} {/* Displaying the value (content) */}
           </div>
         )}
         <div className="comprehension-buttons">
