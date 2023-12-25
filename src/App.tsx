@@ -13,7 +13,8 @@ function App() {
 
   const handleTopicSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3001/getKeyPoints', { // Updated endpoint
+      const response = await fetch('http://localhost:3001/test', {
+      //const response = await fetch('http://localhost:3001/getKeyPoints', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,6 +28,13 @@ function App() {
   
       const data = await response.json();
       setKeyPoints(data.keyPoints);
+      
+      // Check if there are keypoints and set the first one as the current point
+      if (data.keyPoints && data.keyPoints.length > 0) {
+        setCurrentPoint(data.keyPoints[0]);
+      } else {
+        setCurrentPoint(null); // Reset to null if there are no keypoints
+      }
     } catch (error) {
       console.error('There was an error fetching the key points:', error);
     }
@@ -86,9 +94,9 @@ function App() {
             <div
               key={point.id}
               onClick={() => selectKeyPoint(point.id)}
-              className="keypoint"
+              className={`keypoint ${currentPoint && point.id === currentPoint.id ? 'current' : ''}`}
             >
-              {point.id} {/* Displaying the key (id) */}
+              {point.id}
             </div>
           ))}
         </div>

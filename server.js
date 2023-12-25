@@ -45,6 +45,54 @@ app.post('/getKeyPoints', async (req, res) => {
 
 });
 
+app.post('/test', async (req, res) => {
+
+  try {
+    const keyPointsData = {
+      "Key Points": [
+        {
+          "Key": "Origin",
+          "Value": "Monte Carlo methods are named after the famous casino in Monaco, due to the element of chance and randomness involved."
+        },
+        {
+          "Key": "Probabilistic Modeling",
+          "Value": "Monte Carlo methods are used to solve problems through simulation and random sampling, particularly in the field of probabilistic modeling."
+        },
+        {
+          "Key": "Applications",
+          "Value": "Monte Carlo methods are widely used in various fields such as finance, engineering, physics, and computer graphics for solving complex problems that involve randomness and uncertainty."
+        },
+        {
+          "Key": "Integration",
+          "Value": "Monte Carlo integration is a numerical technique for estimating the value of a definite integral using random sampling."
+        },
+        {
+          "Key": "Simulation",
+          "Value": "Monte Carlo simulation involves using random sampling to model and analyze the behavior of complex systems or processes, especially those with stochastic elements."
+        }
+      ]
+    };
+
+    if (keyPointsData && Array.isArray(keyPointsData["Key Points"])) {
+      const rawKeyPoints = keyPointsData["Key Points"];
+    
+      // Transform the key points into an array
+      const keyPoints = rawKeyPoints.map((item, index) => ({
+        id: `${item.Key}`, // Assign a unique ID
+        content: `${item.Value}` 
+      }));
+      console.log('Transformed Key Points:', keyPoints);
+      res.json({ keyPoints });
+    } else {
+      // Handle the case where 'Key Points' is not as expected
+      res.status(500).json({ error: "Invalid key points data" });
+    }
+  } catch (error) {
+    console.error('There was an error fetching the key points:', error);
+    res.status(500).send('Error fetching key points');
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
