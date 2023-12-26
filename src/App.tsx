@@ -4,6 +4,8 @@ import './App.css'; // Make sure to import the CSS file
 interface KeyPoint {
   id: number;
   content: string;
+  simplifiedContent?: string;
+  rewordedContent?: string;
 }
 
 function App() {
@@ -14,21 +16,21 @@ function App() {
   const handleTopicSubmit = async () => {
     try {
       const response = await fetch('http://localhost:3001/test', {
-      //const response = await fetch('http://localhost:3001/getKeyPoints', {
+        //const response = await fetch('http://localhost:3001/getKeyPoints', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ topic }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
       setKeyPoints(data.keyPoints);
-      
+
       // Check if there are keypoints and set the first one as the current point
       if (data.keyPoints && data.keyPoints.length > 0) {
         setCurrentPoint(data.keyPoints[0]);
@@ -37,6 +39,52 @@ function App() {
       }
     } catch (error) {
       console.error('There was an error fetching the key points:', error);
+    }
+  };
+
+  const handleSimplifyText = async () => {
+    if (!currentPoint) return;
+
+    try {
+      const response = await fetch('http://localhost:3001/simplifyText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: currentPoint.content }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setCurrentPoint({ ...currentPoint, simplifiedContent: data.simplifiedText });
+    } catch (error) {
+      console.error('There was an error simplifying the text:', error);
+    }
+  };
+
+  const handleRewordText = async () => {
+    if (!currentPoint) return;
+
+    try {
+      const response = await fetch('http://localhost:3001/rewordText', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: currentPoint.content }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setCurrentPoint({ ...currentPoint, rewordedContent: data.rewordText });
+    } catch (error) {
+      console.error('There was an error rewording the text:', error);
     }
   };
 
@@ -50,13 +98,11 @@ function App() {
 
     switch (response) {
       case 'dontUnderstand':
-        // Mock simplification of the current point
-        setCurrentPoint({ ...currentPoint, content: currentPoint.content + " (Simplified Version)" });
+        handleSimplifyText();
         break;
 
       case 'kindOfUnderstand':
-        // Mock alternative explanation
-        setCurrentPoint({ ...currentPoint, content: currentPoint.content + " (Alternative Explanation)" });
+        handleRewordText();
         break;
 
       case 'understand':
@@ -85,6 +131,7 @@ function App() {
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
           className="topic-input"
+          placeholder='Topic to learn?'
         />
         <button onClick={handleTopicSubmit} className="submit-button">
           Learn
@@ -104,8 +151,22 @@ function App() {
 
       <div className="main-content">
         {currentPoint && (
-          <div className="keypoint current-point">
-            {currentPoint.content} {/* Displaying the value (content) */}
+          <div>
+            <div className="keypoint current-point original-content">
+              {currentPoint.content}
+            </div>
+            {currentPoint.simplifiedContent && (
+              <div className="keypoint current-point">
+                {currentPoint.simplifiedContent}
+                <h3>Simplified</h3>
+              </div>
+            )}
+            {currentPoint.rewordedContent && (
+              <div className="keypoint current-point"> 
+                <div>REWORDED:</div> 
+                {currentPoint.rewordedContent}
+              </div>
+            )}
           </div>
         )}
         <div className="comprehension-buttons">
