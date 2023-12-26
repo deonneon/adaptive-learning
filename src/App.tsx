@@ -162,9 +162,9 @@ function App() {
               </div>
             )}
             {currentPoint.rewordedContent && (
-              <div className="keypoint current-point">
-                {currentPoint.rewordedContent}  
-                <h3>Reworded</h3>
+              <div className="keypoint current-point"> 
+                <div>REWORDED:</div> 
+                {currentPoint.rewordedContent}
               </div>
             )}
           </div>
