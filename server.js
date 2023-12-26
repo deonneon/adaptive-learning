@@ -137,8 +137,8 @@ app.post('/rewordText', async (req, res) => {
       model: "gpt-3.5-turbo-1106",
     });
 
-    const reWord = response.choices[0].message.content;
-    res.json({ reWord });
+    const rewordText = response.choices[0].message.content;
+    res.json({ rewordText });
   } catch (error) {
     console.error('Error rewording text:', error);
     res.status(500).send('Error rewording text');

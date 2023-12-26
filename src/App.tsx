@@ -65,7 +65,7 @@ function App() {
     }
   };
 
-  const handleReWord = async () => {
+  const handleRewordText = async () => {
     if (!currentPoint) return;
 
     try {
@@ -82,7 +82,7 @@ function App() {
       }
 
       const data = await response.json();
-      setCurrentPoint({ ...currentPoint, rewordedContent: data.reWord });
+      setCurrentPoint({ ...currentPoint, rewordedContent: data.rewordText });
     } catch (error) {
       console.error('There was an error rewording the text:', error);
     }
@@ -102,7 +102,7 @@ function App() {
         break;
 
       case 'kindOfUnderstand':
-        handleReWord();
+        handleRewordText();
         break;
 
       case 'understand':
