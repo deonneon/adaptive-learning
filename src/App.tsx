@@ -89,7 +89,7 @@ function App() {
         <button onClick={handleTopicSubmit} className="submit-button">
           Learn
         </button>
-        <div className="keypoints">
+        <div className="keypoints keypoints-container">
           {keyPoints.map((point) => (
             <div
               key={point.id}

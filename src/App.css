@@ -31,9 +31,12 @@ body {
   background-color: var(--content-bg-color);
   padding: 20px;
   border-radius: var(--border-radius);
-  width: 350px; /* Adjust width as needed */
+  width: 20%; /* Adjust width as needed */
   height: calc(100% - 40px); /* Full height minus padding */
   overflow-y: auto; /* Enable scroll for long lists */
+  overflow-x: hidden; /* Enable scroll for long lists */
+  flex-shrink: 0;
+  flex-grow: 0;
   margin-right: 20px;
   box-sizing: border-box;
 }
@@ -70,7 +73,7 @@ button {
 }
 
 button:hover {
-  background-color: darken(var(--accent-color), 10%);
+  background-color: rgb(86, 86, 86);
 }
 
 .keypoint {
@@ -78,11 +81,12 @@ button:hover {
   padding: 10px;
   margin-top: 10px;
   border-radius: var(--border-radius);
+  flex: 0 0 auto; /* Prevent buttons from shrinking */
   cursor: pointer;
 }
 
 .keypoint:hover {
-  background-color: darken(var(--background-color), 5%);
+  background-color: rgb(86, 86, 86);
 }
 
 .current-point{
@@ -110,12 +114,25 @@ button:hover {
     width: 100%;
     margin-right: 0;
     margin-bottom: 20px;
+    height: auto;
   }
 
+  .keypoints-container {
+    /* Styles for horizontal scrolling */
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .keypoint {
+    /* Ensure buttons don't shrink and have margin */
+    flex: 0 0 auto;
+    margin-right: 5px;
+  }
   .main-content {
     width: 100%;
   }
 }
+
 
 
 .keypoint.current {
