@@ -93,6 +93,58 @@ app.post('/test', async (req, res) => {
   }
 });
 
+app.post('/simplifyText', async (req, res) => {
+  const { text } = req.body;
+
+  try {
+    const response = await openaiClient.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant designed to simplify complex text.",
+        },
+        { 
+          role: "user", 
+          content: `Please simplify this text: ${text}`
+        },
+      ],
+      model: "gpt-3.5-turbo-1106",
+    });
+
+    const simplifiedText = response.choices[0].message.content;
+    res.json({ simplifiedText });
+  } catch (error) {
+    console.error('Error simplifying text:', error);
+    res.status(500).send('Error simplifying text');
+  }
+});
+
+app.post('/rewordText', async (req, res) => {
+  const { text } = req.body;
+
+  try {
+    const response = await openaiClient.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant designed to reword text.",
+        },
+        { 
+          role: "user", 
+          content: `I am confused. Please reword this text in a different persepctive: ${text}`
+        },
+      ],
+      model: "gpt-3.5-turbo-1106",
+    });
+
+    const reWord = response.choices[0].message.content;
+    res.json({ reWord });
+  } catch (error) {
+    console.error('Error rewording text:', error);
+    res.status(500).send('Error rewording text');
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
