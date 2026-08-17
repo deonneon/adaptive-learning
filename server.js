@@ -1,8 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-const openai = require('openai');
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import OpenAI from 'openai';
 
-require('dotenv').config();
+dotenv.config();
 
 const app = express();
 const port = 3001;
@@ -12,7 +13,7 @@ app.use(express.json());
 
 const openaiApiKey = process.env.REACT_APP_OPENAI_API_KEY;
 
-const openaiClient = new openai({ apiKey: openaiApiKey });
+const openaiClient = new OpenAI({ apiKey: openaiApiKey });
 
 app.post('/getKeyPoints', async (req, res) => {
   const { topic } = req.body;
@@ -30,11 +31,9 @@ app.post('/getKeyPoints', async (req, res) => {
     ],
     model: "gpt-3.5-turbo-1106",
     response_format: { type: "json_object" },
-    //max_tokens: 100, // Adjust as needed
   });
   const parsedContent = JSON.parse(response.choices[0].message.content);
 
-  // Map the "Key Points" to your desired format
   const keyPoints = parsedContent["Key Points"].map((item) => ({
     id: item.Key,
     content: item.Value
@@ -76,15 +75,13 @@ app.post('/test', async (req, res) => {
     if (keyPointsData && Array.isArray(keyPointsData["Key Points"])) {
       const rawKeyPoints = keyPointsData["Key Points"];
     
-      // Transform the key points into an array
-      const keyPoints = rawKeyPoints.map((item, index) => ({
-        id: `${item.Key}`, // Assign a unique ID
+      const keyPoints = rawKeyPoints.map((item) => ({
+        id: `${item.Key}`,
         content: `${item.Value}` 
       }));
       console.log('Transformed Key Points:', keyPoints);
       res.json({ keyPoints });
     } else {
-      // Handle the case where 'Key Points' is not as expected
       res.status(500).json({ error: "Invalid key points data" });
     }
   } catch (error) {
